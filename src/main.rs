@@ -1,3 +1,5 @@
+use  std::fs;
+
 #[derive(Debug)]
 enum TokenKind {
     // Keywords
@@ -85,13 +87,9 @@ impl Lexer {
 }
 
 fn main() {
-    let content = "#include<stdio.h>
-        int main(){
-        printf('Hello world');
-        return 0;
-    } ".to_string();
+    let source = fs::read_to_string("hello.c").expect("Can't read this file.");
 
-    let mut lexer = Lexer::new(content);
+    let mut lexer = Lexer::new(source);
 
     loop {
         let token = lexer.next_token();
