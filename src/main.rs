@@ -1,4 +1,4 @@
-use  std::fs;
+use  std::{fs, env};
 
 #[derive(Debug)]
 enum TokenKind {
@@ -87,7 +87,13 @@ impl Lexer {
 }
 
 fn main() {
-    let source = fs::read_to_string("hello.c").expect("Can't read this file.");
+
+    let args: Vec<String> = env::args().collect();
+
+    let command = &args[1];
+    let file_path = &args[2];
+
+    let source = fs::read_to_string(file_path).expect("Can't read this file.");
 
     let mut lexer = Lexer::new(source);
 
@@ -97,7 +103,7 @@ fn main() {
         match token.kind {
             TokenKind::Eof => {
                 println!("{:?}", token);
-                break; // Terminate the loop when end-of-file token is encountered
+                break;
             }
             _ => println!("{:?}", token),
         }
