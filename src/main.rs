@@ -65,7 +65,13 @@ impl Lexer {
             ';' => Token::new(TokenKind::Semicolon, self.char.to_string()),
             '\0' => Token::new(TokenKind::Eof, String::new()),
             '0'..='9' => self.read_numeric_literal(),
-            _ => Token::new(TokenKind::Unknown, self.char.to_string())
+            _ => {
+                if self.char.is_alphabetic() {
+                    self.read_keyword_or_identifier()
+                } else {
+                    Token::new(TokenKind::Unknown, self.char.to_string())
+                }
+            }
         };
 
         self.read_char();
@@ -95,11 +101,22 @@ impl Lexer {
             literal.push(self.char);
             self.read_char();
         }
-
         Token::new(TokenKind::NumericLiteral, literal)
-
     }
 
+    fn read_keyword_or_identifier(&mut self) -> Token {
+        let mut literal = String::new();
+        while self.char.is_alphanumeric() {
+            literal.push(self.char);
+            self.read_char();
+        }
+
+        match literal.as_str() {
+            "int" => Token::new(TokenKind::Int, literal),
+            "return" => Token::new(TokenKind::Return, literal),
+            _ => Token::new(TokenKind::Identifier, literal),
+        }
+    }
 }
 
 fn main() {
