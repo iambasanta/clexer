@@ -153,19 +153,23 @@ fn main() {
     let command = &args[1];
     let file_path = &args[2];
 
-    let source = fs::read_to_string(file_path).expect("Can't read this file.");
+    if command == "tokenize" {
+        let source = fs::read_to_string(file_path).expect("Can't read this file.");
 
-    let mut lexer = Lexer::new(source);
+        let mut lexer = Lexer::new(source);
 
-    loop {
-        let token = lexer.next_token();
+        loop {
+            let token = lexer.next_token();
 
-        match token.kind {
-            TokenKind::Eof => {
-                println!("{:?}", token);
-                break;
+            match token.kind {
+                TokenKind::Eof => {
+                    println!("{:?}", token);
+                    break;
+                }
+                _ => println!("{:?}", token),
             }
-            _ => println!("{:?}", token),
         }
+    } else {
+        println!("Unrecognized command");
     }
 }
