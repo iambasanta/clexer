@@ -14,6 +14,9 @@ enum TokenKind {
     CloseCurly,
     Semicolon,
 
+    // Literals
+    NumericLiteral,
+
     // Others
     Eof,
     Unknown,
@@ -61,6 +64,7 @@ impl Lexer {
             '}' => Token::new(TokenKind::CloseCurly, self.char.to_string()),
             ';' => Token::new(TokenKind::Semicolon, self.char.to_string()),
             '\0' => Token::new(TokenKind::Eof, String::new()),
+            '0'..='9' => self.read_numeric_literal(),
             _ => Token::new(TokenKind::Unknown, self.char.to_string())
         };
 
@@ -82,6 +86,18 @@ impl Lexer {
         while self.char.is_ascii_whitespace() {
             self.read_char();
         }
+    }
+
+    fn read_numeric_literal(&mut self) -> Token {
+        let mut literal = String::new();
+
+        while self.char.is_digit(10) {
+            literal.push(self.char);
+            self.read_char();
+        }
+
+        Token::new(TokenKind::NumericLiteral, literal)
+
     }
 
 }
