@@ -13,9 +13,13 @@ enum TokenKind {
     OpenCurly,
     CloseCurly,
     Semicolon,
+    Hash,
+    LessThan,
+    GreaterThan,
 
     // Literals
     NumericLiteral,
+    StringLiteral,
 
     // Others
     Eof,
@@ -63,6 +67,10 @@ impl Lexer {
             '{' => Token::new(TokenKind::OpenCurly, self.char.to_string()),
             '}' => Token::new(TokenKind::CloseCurly, self.char.to_string()),
             ';' => Token::new(TokenKind::Semicolon, self.char.to_string()),
+            '#' => Token::new(TokenKind::Hash, self.char.to_string()),
+            '<' => Token::new(TokenKind::LessThan, self.char.to_string()),
+            '>' => Token::new(TokenKind::GreaterThan, self.char.to_string()),
+            '\"' => self.read_string_literal(),
             '\0' => Token::new(TokenKind::Eof, String::new()),
             '0'..='9' => self.read_numeric_literal(),
             _ => {
@@ -116,6 +124,25 @@ impl Lexer {
             "return" => Token::new(TokenKind::Return, literal),
             _ => Token::new(TokenKind::Identifier, literal),
         }
+    }
+
+    fn read_string_literal(&mut self) -> Token {
+
+        let mut literal = String::new();
+        literal.push(self.char);
+
+        self.read_char();
+
+        while self.char != '\"' {
+            literal.push(self.char);
+            self.read_char();
+        }
+
+        literal.push(self.char);
+
+        self.read_char();
+
+        Token::new(TokenKind::StringLiteral, literal)
     }
 }
 
